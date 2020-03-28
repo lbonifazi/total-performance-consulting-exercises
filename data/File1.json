@@ -1,0 +1,11 @@
+{
+  "import": [
+    "File2"
+  ],
+  "Element1": {
+    "locator": "Element1"
+  },
+  "Element2": {
+    "locator": "..."
+  }
+}

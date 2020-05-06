@@ -40,13 +40,13 @@ def get_elements(locator):
     """
     elements_list = []
     if locator == 'Element1':
-        elements_list = [Element(locator, 2, 3, 4, 5)]
+        elements_list = [Element(locator, 1, 1, 1, 1)]
     elif locator == 'class_name':
         elements_list = [
-            Element(locator, 5, 4, 4, 5),
-            Element(locator, 87, 22, 2, 7),
-            Element(locator, 64, 26, 22, 24),
-            Element(locator, 5, 4, 4, 5),
+            Element(locator, 5, 4, 1, 1),
+            Element(locator, 7, 22, 2, 7),
+            Element(locator, 2, 26, 1, 1),
+            Element(locator, 10, 0, 1, 1),
             Element(locator, 43, 33, 4, 5)]
     elif locator == '...class_name1...':
         elements_list = [

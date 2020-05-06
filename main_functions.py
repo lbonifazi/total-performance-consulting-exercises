@@ -1,5 +1,5 @@
 import math
-
+from model.enums import SearchType
 from helpers.utils import load_json, get_elements, get_center_coordinates
 from setup.setup_app import LOCATOR_KEY_NAME, ELEMENT_NAME_PLACEHOLDER, FINDERS_KEY_NAME, DATA_FILE_PATH
 from model.element_dto import Element
@@ -29,17 +29,21 @@ def find_element(element_name):
     # Look for existing elements for each locator in list
     for locator in locators:
         element_list = get_elements(locator)
-        if element_list:
-            return element_list[0]
+        return element_list[0] if element_list else None
     return None
 
 
-def find_element_near_to(element, locator):
+def find_element_near_to(element, locator, search_type=SearchType.ALL):
     """Find a element object of the elements with locator X that is nearest to element A
-    :param locator: locator X
-    :type locator: str
     :param element: element A
     :type element: Element
+
+    :param locator: locator X
+    :type locator: str
+
+    :param search_type: Type of search. Default = SearchType.ALL
+    :type search_type: SearchType
+
     :return an Element object or a None value if not found.
     """
     if None not in (element, locator):
@@ -49,13 +53,33 @@ def find_element_near_to(element, locator):
             # Get the center of the element
             x1, y1 = get_center_coordinates(element)
 
-            # Search minimum distance
             found_elements = []
             min_distance = None
+            # calculate distance for each element
             for e in element_list:
+                element_distance = None
                 x2, y2 = get_center_coordinates(e)
-                # calculate the distance using the Pythagorean Theorem and find the minimum
-                element_distance = math.sqrt(((x2 - x1) ** 2) + ((y2 - y1) ** 2))
+                if search_type in (SearchType.X_AXIS, SearchType.LEFT, SearchType.RIGHT):
+                    # Search in X axis
+                    if search_type == SearchType.LEFT and x1 >= x1:
+                        continue
+                    elif search_type == SearchType.RIGHT and x2 <= x1:
+                        continue
+                    else:
+                        element_distance = abs(x2 - x1)
+                elif search_type in (SearchType.Y_AXIS, SearchType.UP, SearchType.DOWN):
+                    # Search in Y axis
+                    if search_type == SearchType.UP and y2 <= y1:
+                        continue
+                    elif search_type == SearchType.DOWN and y2 >= y1:
+                        continue
+                    else:
+                        element_distance = abs(y2 - y1)
+                elif search_type == SearchType.ALL:
+                    # Search in both axis. Calculate the distance using the Pythagorean Theorem and find the minimum
+                    element_distance = math.sqrt(((x2 - x1) ** 2) + ((y2 - y1) ** 2))
+
+                # save the minimal distance
                 if min_distance is None or element_distance < min_distance:
                     min_distance = element_distance
                     found_elements = [e]
@@ -66,7 +90,8 @@ def find_element_near_to(element, locator):
             if len(found_elements) > 1:
                 print("There are more than one element with the same distance. First element was returned. See log "
                       "for more information.")
-                logger.info('Element founds: \n' + '\n'.join([str(e.__dict__) for e in found_elements]))
+                logger.info('Element founds: \n' + '\n'.join([str(e) for e in found_elements]))
 
-            return found_elements[0]
+            # return the first element of the list
+            return found_elements[0] if found_elements else None
     return None

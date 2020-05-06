@@ -21,11 +21,12 @@
 This is an test example:
 ```python
 from main_functions import find_element, find_element_near_to
+from model.enums import SearchType
 
 element_a = find_element("Element1")
-element_b = find_element_near_to(element_a, "class_name")
+element_b = find_element_near_to(element_a, "class_name", search_type=SearchType.ALL)
 if element_b is not None:
-    print(element_b.__dict__)
+    print("Target Element: {}\nNearest Element: {}".format(element_a, element_b))
 ```
 
 ## Author

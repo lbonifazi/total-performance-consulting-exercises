@@ -11,3 +11,7 @@ class Element:
 
     def size(self):
         return self.width, self.height
+
+    def __str__(self):
+        return 'Element -> Locator: {}, X Coordinate: {}, Y Coordinate: {}, With: {}, Height: {}'\
+            .format(self.locator, self.x, self.y, self.width, self.height)
